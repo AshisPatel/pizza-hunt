@@ -1,3 +1,3 @@
-import Pizza from "./Pizza";
+const Pizza = require("./Pizza");
 
-export { Pizza }
+module.exports = Pizza; 
