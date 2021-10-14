@@ -25,6 +25,19 @@ const commentController = {
             })
             .catch(err => res.status(500).json(err));
     },
+    // add reply method to a comment document
+    addReply({ params, body }, res) {
+        Comment.findOneAndUpdate({ _id: params.commentId },
+            { $push: { replies: body } },
+            { new: true }
+        )
+            .then(dbPizzaData => {
+                dbPizzaData ?
+                    res.status(200).json(dbPizzaData) :
+                    res.status(404).json({ message: 'No comment found with this id!' })
+            })
+            .catch(err => res.status(500).json(err));
+    },
     // delete comment
     deleteComment({ params }, res) {
         // Find one and delete returns the object that is deleted, so we can pass it on in the next promise. 
@@ -35,7 +48,7 @@ const commentController = {
                     res.status(404).json({ message: "No comment found with this id!" })
                     return;
                 }
-                return  Pizza.findOneAndUpdate(
+                return Pizza.findOneAndUpdate(
                     { _id: params.pizzaId },
                     { $pull: { comments: params.commentId } },
                     { new: true }
@@ -43,10 +56,26 @@ const commentController = {
             })
             .then(dbPizzaData => {
                 dbPizzaData ?
-                res.status(200).json(dbPizzaData) :
-                res.status(404).json({ message: 'No pizza found with this id!' });
+                    res.status(200).json(dbPizzaData) :
+                    res.status(404).json({ message: 'No pizza found with this id!' });
             })
             .catch(err => res.status(500).json(err));
+    },
+    // Delete reply 
+    deleteReply({ params }, res) {
+        Comment.findOneAndUpdate(
+            { _id: params.commentId },
+            // Here we are tracking all of the reply data in replies, thus we need to destructure the reply object, and see where the replyId key matches the given id
+            { $pull: { replies: { replyId: params.replyId} } },
+            { new: true }
+        )
+        .then(dbPizzaData => {
+            dbPizzaData ? 
+                res.status(200).json(dbPizzaData) :
+                res.status(404).json({ message: 'No pizza found with this id!' })
+        })
+        .catch(err => res.status(500).json(err));
+
     }
 }
 
