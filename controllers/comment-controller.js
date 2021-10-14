@@ -7,7 +7,6 @@ const commentController = {
         Comment.create(body)
             // the comment, then has an _id that mongo creates, we pass that on to the next function
             .then(({ _id }) => {
-                console.log('hello 1')
                 return Pizza.findOneAndUpdate(
                     // This finds the right pizza based on the params.id that we pass in 
                     { _id: params.pizzaId },
@@ -20,11 +19,9 @@ const commentController = {
                 )
             })
             .then(dbPizzaData => {
-                console.log('hello 2')
-                console.log(dbPizzaData);
                 dbPizzaData ?
-                res.status(200).json(dbPizzaData) :
-                res.status(404).json({ message: 'No pizza found with this id!' })
+                    res.status(200).json(dbPizzaData) :
+                    res.status(404).json({ message: 'No pizza found with this id!' })
             })
             .catch(err => res.status(500).json(err));
     },
@@ -33,13 +30,21 @@ const commentController = {
         // Find one and delete returns the object that is deleted, so we can pass it on in the next promise. 
         Comment.findOneAndDelete({ _id: params.commentId })
             .then(deletedComment => {
-                deletedComment ?
-                    res.status(200).json(deletedComment) :
-                    (Pizza.findOneAndUpdate(
-                        { _id: params.pizzaId },
-                        { $pull: { comments: params.commentId } },
-                        { new: true }
-                    ))
+
+                if (!deletedComment) {
+                    res.status(404).json({ message: "No comment found with this id!" })
+                    return;
+                }
+                return  Pizza.findOneAndUpdate(
+                    { _id: params.pizzaId },
+                    { $pull: { comments: params.commentId } },
+                    { new: true }
+                )
+            })
+            .then(dbPizzaData => {
+                dbPizzaData ?
+                res.status(200).json(dbPizzaData) :
+                res.status(404).json({ message: 'No pizza found with this id!' });
             })
             .catch(err => res.status(500).json(err));
     }
