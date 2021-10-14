@@ -48,7 +48,16 @@ PizzaSchema.virtual('commentCount').get(function () {
     // It is adding the number of replies of the current comment to the pre-existing accumulated total 
     // +1 is to account for the comment itself in the total count
     // The reduce varies from map because it uses the results from each execution for the next execution
-    return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0)
+    
+
+    // Check to see if the "comment.replies" actually exists, otherwise the Insomnia for add a comment, will not be able to return the pizza data, since replies is nonexistant?
+    return this.comments.reduce((total, comment) => {
+        if (comment.replies) {
+             return total + comment.replies.length + 1
+        } else {
+            return 1; 
+        }
+    }, 0);
 });
 
 const Pizza = model('Pizza', PizzaSchema);

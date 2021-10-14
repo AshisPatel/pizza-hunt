@@ -15,6 +15,6 @@ router
     .delete(deleteComment);
 
 router
-    .route('/pizzaId/:commentId/:repliyId')
+    .route('/:pizzaId/:commentId/:replyId')
     .delete(deleteReply)
 module.exports = router;
