@@ -1,13 +1,13 @@
-const { Comment } = require('../models');
+const { Comment, Pizza } = require('../models');
 
 const commentController = {
     // add comment to a specific pizza 
     addComment({ params, body }, res) {
-        console.log(body);
         // Creating the comment in the comment document
         Comment.create(body)
             // the comment, then has an _id that mongo creates, we pass that on to the next function
             .then(({ _id }) => {
+                console.log('hello 1')
                 return Pizza.findOneAndUpdate(
                     // This finds the right pizza based on the params.id that we pass in 
                     { _id: params.pizzaId },
@@ -20,9 +20,11 @@ const commentController = {
                 )
             })
             .then(dbPizzaData => {
+                console.log('hello 2')
+                console.log(dbPizzaData);
                 dbPizzaData ?
-                    res.status(200).json(dbPizzaData) :
-                    res.status(404).json({ message: 'No pizza found with this id!' })
+                res.status(200).json(dbPizzaData) :
+                res.status(404).json({ message: 'No pizza found with this id!' })
             })
             .catch(err => res.status(500).json(err));
     },
