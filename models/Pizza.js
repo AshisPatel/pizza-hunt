@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 const PizzaSchema = new Schema({
     pizzaName: {
@@ -9,7 +10,9 @@ const PizzaSchema = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        // implementing a 'getter' by invoking the key word 'get'. A 'getter' is something that modifies the data in the db when it is being retrieved rather than editing the data during storage
+        get: (createdAtVal) => dateFormat(createdAtVal)
     },
     size: {
         type: String,
@@ -27,9 +30,10 @@ const PizzaSchema = new Schema({
     ]
 },
     {
-        // this is set to enable the use of virtuals for our model
+        // this is set to enable the use of virtuals and getters for our model
         toJSON: {
-            virtuals: true
+            virtuals: true,
+            getters: true
         },
         // This id is a virtual that is returned by mongoose that we do not need
         id: false
