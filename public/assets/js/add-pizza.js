@@ -67,6 +67,8 @@ const handlePizzaSubmit = event => {
   })
   .catch(err => {
     console.log(err);
+    // save record to indexedDB db if the app has lost internet connection
+    saveRecord(formData);
   });
 
 };
