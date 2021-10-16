@@ -3,10 +3,14 @@ const dateFormat = require('../utils/dateFormat');
 
 const PizzaSchema = new Schema({
     pizzaName: {
-        type: String
+        type: String,
+        required: 'A pizza name is required!',
+        trim: true
     },
     createdBy: {
-        type: String
+        type: String,
+        required: true,
+        trim: true 
     },
     createdAt: {
         type: Date,
@@ -16,6 +20,10 @@ const PizzaSchema = new Schema({
     },
     size: {
         type: String,
+        // A required string can't be returned here due to the enum, however there is a mongoose 'validate' function that can be utilized
+        required: true,
+        // enum sets the accepted values for this parameter 
+        enum: ['Personal', 'Small', 'Medium', 'Large', 'Exta Large'],
         default: 'Large'
     },
     // Indicates an array as a datatype instead of using type: Array

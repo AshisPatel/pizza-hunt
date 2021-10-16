@@ -51,7 +51,9 @@ const pizzaController = {
     // updated pizza by id
     updatePizza({ params, body }, res) {
         // The new: true parameter is to ensure that mongoose returns the new document rather than the old non-updated one 
-        Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true })
+        // validators are generally only run when data is created for a document, not when its updated, so we run validators here. 
+        Pizza.findOneAndUpdate({ _id: params.id }, 
+            body, { new: true, runValidators: true })
             .then(dbPizzaData => {
                 dbPizzaData ?
                     res.json(dbPizzaData) :
